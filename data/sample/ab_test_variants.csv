@@ -1,0 +1,11 @@
+test_id,test_name,variant_key,variant_name,variant_description
+icon_design_001,App Icon Design Test,control,Original Icon,Current app icon design
+icon_design_001,App Icon Design Test,variant_a,Minimalist Icon,"Clean, minimalist icon design"
+icon_design_001,App Icon Design Test,variant_b,Colorful Icon,"Bright, colorful icon design"
+description_002,App Description Length Test,control,Short Description,Concise app description (50-100 words)
+description_002,App Description Length Test,variant_a,Detailed Description,Comprehensive app description (200-300 words)
+pricing_003,Pricing Strategy Test,control,Free,Completely free app
+pricing_003,Pricing Strategy Test,variant_a,Freemium,Free with in-app purchases
+pricing_003,Pricing Strategy Test,variant_b,Paid,One-time purchase ($2.99)
+screenshots_004,Screenshot Count Test,control,3 Screenshots,App store listing with 3 screenshots
+screenshots_004,Screenshot Count Test,variant_a,5 Screenshots,App store listing with 5 screenshots
