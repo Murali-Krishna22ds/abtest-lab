@@ -9,3 +9,4 @@ frontend/dist/
 .env
 *.log
 .DS_Store
+.venv/
