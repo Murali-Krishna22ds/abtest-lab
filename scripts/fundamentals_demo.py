@@ -13,7 +13,7 @@ import numpy as np
 from scipy import stats
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
-from app.services.power import power_two_sample_t, sample_size_two_means  # noqa: E402
+from app.stats.power import power_means, sample_size_means  # noqa: E402
 
 rng = np.random.default_rng(2024)
 N_SIM = 5000
@@ -51,11 +51,12 @@ def main() -> None:
         a = rng.normal(0, 1, (N_SIM, size))
         b = rng.normal(d, 1, (N_SIM, size))
         p, *_ = welch(a, b)
-        print(f"   d={d}, n={size}/arm: simulated {np.mean(p < 0.05):.3f} vs formula {power_two_sample_t(d, size, size):.3f}")
+        print(f"   d={d}, n={size}/arm: simulated {np.mean(p < 0.05):.3f} vs formula {power_means(d, 1.0, size, size):.3f}")
 
     print("4. Sample size needed to hit 80% power grows with 1/d^2")
     for d in (0.8, 0.5, 0.2, 0.1):
-        n1, _, pw = sample_size_two_means(d)
+        n1, n2 = sample_size_means(d, 1.0)
+        pw = power_means(d, 1.0, n1, n2)
         print(f"   d={d}: n={n1} per arm (power {pw:.3f}); n*d^2 = {n1 * d * d:.1f}  (roughly constant ~15.7)")
 
     print("5. Underpowered tests exaggerate the effects they do detect (winner's curse)")
