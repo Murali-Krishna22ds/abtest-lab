@@ -1,3 +1,5 @@
+# Direct dependencies with the ranges this project was tested against.
+# Exact tested versions are in requirements.lock.txt (use it for reproducible installs).
 fastapi>=0.115
 uvicorn[standard]>=0.30
 python-multipart>=0.0.9
@@ -7,7 +9,8 @@ numpy>=2.0
 pandas>=2.2
 scipy>=1.14
 statsmodels>=0.14
-scikit-learn>=1.5
-pymc>=5.16
+# EconML 0.16 supports scikit-learn < 1.7; an unbounded range makes pip backtrack for minutes or fail.
+scikit-learn>=1.5,<1.7
+econml>=0.15,<0.17
 dowhy>=0.12
-econml>=0.15
+pymc>=5.16
