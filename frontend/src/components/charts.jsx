@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, Tooltip, XAxis, YAxis, Legend as RLegend,
 } from "recharts";
 import { Chart, Tip } from "./ui.jsx";
-import { isNum, num, pct } from "../format.js";
+import { compact, isNum, num, pct } from "../format.js";
 
 export const COLORS = { control: "#1f9a9a", variant: "#e0552f", alt: ["#e0552f", "#c77d0a", "#7a4fd1", "#2a7fd1", "#b04a8f"], mute: "#8b92a1", ink: "#8b92a1" };
 const H = 300;
@@ -347,7 +347,7 @@ export function PowerCurve({ curve, target, nRequired }) {
     <ResponsiveContainer width="100%" height={H - 40}>
       <LineChart data={curve} margin={{ left: 0, right: 20, top: 10, bottom: 18 }}>
         <CartesianGrid />
-        <XAxis dataKey="n_per_arm" tickFormatter={(v) => v.toLocaleString()} tick={{ fontSize: 11 }} label={{ value: "users per arm", position: "insideBottom", offset: -2, fontSize: 11 }} />
+        <XAxis dataKey="n_per_arm" tickFormatter={compact} minTickGap={28} tick={{ fontSize: 11 }} label={{ value: "users per arm", position: "insideBottom", offset: -2, fontSize: 11 }} />
         <YAxis domain={[0, 1]} tickFormatter={(v) => pct(v, 0)} tick={{ fontSize: 11 }} />
         <Tooltip content={<Tip fmt={(v) => pct(v, 1)} />} labelFormatter={(v) => `${Number(v).toLocaleString()} per arm`} />
         <ReferenceLine y={target} stroke={COLORS.variant} strokeDasharray="4 3" label={{ value: `${pct(target, 0)} power`, fontSize: 11, fill: "var(--muted)", position: "insideBottomRight" }} />
@@ -366,7 +366,7 @@ export function RateBars({ data, refLine, fmt = (v) => pct(v, 1), yLabel }) {
         <XAxis dataKey="name" tick={{ fontSize: 12 }} />
         <YAxis tickFormatter={(v) => pct(v, 0)} tick={{ fontSize: 11 }} domain={[0, 1]} label={yLabel && { value: yLabel, angle: -90, position: "insideLeft", fontSize: 11 }} />
         <Tooltip content={<Tip fmt={fmt} />} />
-        {refLine !== undefined && <ReferenceLine y={refLine} stroke={COLORS.variant} strokeDasharray="5 4" label={{ value: `α = ${refLine}`, fontSize: 11, fill: "var(--muted)", position: "insideTopRight" }} />}
+        {refLine !== undefined && <ReferenceLine y={refLine} stroke={COLORS.variant} strokeDasharray="5 4" />}
         <Bar isAnimationActive={false} dataKey="value" name="rate" radius={[4, 4, 0, 0]} shape={(p) => <rect {...p} fill={data[p.index]?.color || COLORS.control} rx="3" />} />
       </BarChart>
     </ResponsiveContainer>

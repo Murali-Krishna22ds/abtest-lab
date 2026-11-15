@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    image: experiment-lab:latest
+    ports: ["8000:8000"]
+    environment:
+      ABLAB_WARMUP_PYMC: "true"
+      ABLAB_MAX_UPLOAD_MB: "10"
+    restart: unless-stopped

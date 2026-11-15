@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -19,7 +20,17 @@ from .routers import analyze, data, power, studies, tests
 
 log = logging.getLogger("ablab")
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    if settings.warmup_pymc:  # compile the PyMC model in the background so the first user request is fast
+        from .stats import bayes
+
+        threading.Thread(target=bayes.warmup, daemon=True).start()
+    yield
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="Experimentation Lab API",
     version=__version__,
     description="Power analysis, classical and sequential tests, Bayesian A/B analysis and observational causal methods.",
@@ -59,14 +70,6 @@ def health() -> dict:
 
 for r in (data.router, power.router, tests.router, studies.router, analyze.router):
     app.include_router(r)
-
-
-@app.on_event("startup")
-def _warmup() -> None:
-    if settings.warmup_pymc:
-        from .stats import bayes
-
-        threading.Thread(target=bayes.warmup, daemon=True).start()
 
 
 _DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"

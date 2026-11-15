@@ -119,7 +119,7 @@ function SizeResult({ out, prop, f }) {
       <div className="facts">
         <Fact k="Total users" v={num(out.n_total, 0)} />
         <Fact k="Achieved power" v={pct(out.achieved_power, 1)} />
-        <Fact k="α used" v={pct(out.alpha_adjusted, 2)} s={out.n_comparisons > 1 ? `Bonferroni for ${out.n_comparisons}` : "single comparison"} />
+        <Fact k="Alpha used" v={pct(out.alpha_adjusted, 2)} s={out.n_comparisons > 1 ? `Bonferroni for ${out.n_comparisons}` : "single comparison"} />
       </div>
       <Chart title="Power by sample size" caption="Power rises with sample size and levels off. The dark dashed line is the size you need.">
         <PowerCurve curve={out.curve} target={out.power} nRequired={out.n_control} />

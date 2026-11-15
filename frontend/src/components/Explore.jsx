@@ -64,7 +64,7 @@ function Peeking() {
       <ErrorBox error={error} />
       {rows && (
         <Chart title={null_ ? "False-positive rate by stopping rule" : "Power by stopping rule"}
-          caption={null_ ? "Peeking pushes the error rate far above the 5% promised. Both sequential methods stay at or below it." : "Share of experiments that found the real effect. Sequential methods give up a little power for the right to peek."}>
+          caption={null_ ? "The dashed line is the 5% error rate we promised. Peeking pushes the real rate far above it; both sequential methods stay at or below it." : "Share of experiments that found the real effect. Sequential methods give up a little power for the right to peek."}>
           <RateBars data={rows} refLine={null_ ? 0.05 : undefined} />
           <div className="table-wrap" style={{ marginTop: 10 }}>
             <table>
@@ -105,7 +105,7 @@ function Multiple() {
       <ErrorBox error={error} />
       {rows && (
         <>
-          <Chart title="Chance of at least one false positive (FWER)" caption="Bonferroni and Holm hold this at 5%. Benjamini-Hochberg intentionally tolerates some false positives to find more real effects.">
+          <Chart title="Chance of at least one false positive (FWER)" caption="The dashed line marks 5%. Bonferroni and Holm hold the family-wise error there; Benjamini-Hochberg intentionally tolerates more false positives to find more real effects.">
             <RateBars data={rows.map((r) => ({ name: r.name, value: r.fwer, color: r.key === "none" ? COLORS.variant : COLORS.control }))} refLine={0.05} />
           </Chart>
           <div className="table-wrap">

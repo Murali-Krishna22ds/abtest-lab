@@ -93,6 +93,7 @@ ok(/\d[\d,]* users in control/.test(planText), "planner reports required sample 
 await page.getByRole("tab", { name: "Explore the pitfalls" }).click();
 await page.getByRole("button", { name: "Run simulation" }).first().click();
 await page.getByText("False-positive rate by stopping rule").waitFor({ timeout: 60000 });
+await page.getByText("How the stopping boundaries behave").waitFor();
 await shot("09-explore");
 ok(true, "peeking simulation renders");
 
