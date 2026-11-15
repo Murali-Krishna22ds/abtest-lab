@@ -367,7 +367,7 @@ def synthetic(res: dict, outcome: str, truth: float | None = None) -> dict:
     if p is not None:
         summary.append(
             f"Placebo test: applying the same method to each of the {res['n_placebos']} untreated units, "
-            f"{res['n_placebos'] * p - 1 + 1e-9:.0f} of them showed a post/pre error ratio as large as the treated unit's, giving {fp(p)}. "
+            f"{max(0, round(p * (res['n_placebos'] + 1) - 1))} of them showed a post/pre error ratio as large as the treated unit's, giving {fp(p)}. "
             "A small p-value means the treated unit's divergence is rare among units that were not treated."
         )
     if truth is not None:

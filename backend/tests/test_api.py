@@ -62,8 +62,24 @@ def test_unknown_dataset_is_404():
     assert post("/api/analyze/frequentist", dataset_id="nope", outcome="x").status_code == 404
 
 
-def test_path_traversal_sample_rejected():
-    assert client.post("/api/samples/..%2Fsecret").status_code in (404, 422)
+@pytest.mark.parametrize("path", ["/api/samples/..%2Fsecret", "/api/samples/../secret", "/api/samples/%2e%2e%2fpytest.ini"])
+def test_sample_path_traversal_is_rejected(path):
+    r = client.post(path)
+    assert r.status_code in (404, 405, 422)  # exact code depends on routing; what matters is that it is never served
+
+
+@pytest.mark.parametrize("path", ["/..%2f..%2fetc/passwd", "/%2e%2e/%2e%2e/etc/passwd", "/assets/../../backend/app/main.py"])
+def test_static_route_never_leaks_files(path):
+    r = client.get(path)
+    assert "root:" not in r.text and "FastAPI(" not in r.text and "settings" not in r.text
+
+
+def test_load_sample_allowlist():
+    from app.errors import AppError
+    from app.services import datasets as dsv
+
+    with pytest.raises(AppError):
+        dsv.load_sample("../pytest")
 
 
 # --------------------------------------------------------------------------- power
@@ -240,6 +256,16 @@ def test_synthetic_control_recovers_effect(panel):
              treated_value="treated").json()["result"]
     assert r["estimate"] == pytest.approx(5.0, abs=1.5)
     assert sum(w["weight"] for w in r["weights"]) == pytest.approx(1.0, abs=1e-3)
+
+
+def test_synthetic_narrative_counts_placebos_correctly(panel):
+    """Regression: the placebo count was computed as n*p-1 instead of p*(n+1)-1, printing '-0 of them'."""
+    out = post("/api/analyze/synthetic-control", dataset_id=panel["id"], outcome="outcome", unit_col="unit", time_col="date",
+               intervention=panel["meta"]["suggested"]["cutoff"], group_col="group", treated_value="treated").json()
+    text = " ".join(out["narrative"]["summary"])
+    assert "-0 of them" not in text and "Placebo test" in text
+    n, p = out["result"]["n_placebos"], out["result"]["p_value"]
+    assert round(p * (n + 1) - 1) >= 0
 
 
 def test_did_bad_cutoff(panel):
