@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 620" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" role="img" aria-label="Experiment Lab architecture">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1c2230"/></marker>
+    <style>
+      .t{font-size:13px;fill:#1c2230}.h{font-size:15px;font-weight:600;fill:#1c2230}.s{font-size:11.5px;fill:#5a6272}
+      .box{fill:#fffdf8;stroke:#1c2230;stroke-width:1.5;rx:9}.band{fill:#f1ecdd;stroke:#c9c2ae;rx:12}
+      .ui{fill:#fbe4dc;stroke:#d9482b;stroke-width:1.5;rx:9}.st{fill:#dcefee;stroke:#17797a;stroke-width:1.5;rx:9}
+      .ln{stroke:#1c2230;stroke-width:1.6;fill:none}
+    </style>
+  </defs>
+  <rect width="1040" height="620" fill="#f5f2ea"/>
+  <text x="24" y="34" font-size="20" font-weight="600" font-family="Newsreader, Georgia, serif" fill="#1c2230">Experiment Lab: architecture</text>
+
+  <!-- Browser -->
+  <rect class="band" x="24" y="52" width="992" height="108"/>
+  <text class="s" x="40" y="72">BROWSER · React 18 + Vite + Recharts</text>
+  <rect class="ui" x="40" y="82" width="170" height="64"/><text class="h" x="52" y="106">Analyze</text><text class="s" x="52" y="124">upload · method · answer</text>
+  <rect class="ui" x="226" y="82" width="170" height="64"/><text class="h" x="238" y="106">Plan</text><text class="s" x="238" y="124">power · sample size · MDE</text>
+  <rect class="ui" x="412" y="82" width="170" height="64"/><text class="h" x="424" y="106">Explore</text><text class="s" x="424" y="124">peeking · multiple tests</text>
+  <rect class="ui" x="598" y="82" width="190" height="64"/><text class="h" x="610" y="106">Charts</text><text class="s" x="610" y="124">forest · corridor · posterior</text><text class="s" x="610" y="138">balance · placebo</text>
+  <rect class="ui" x="804" y="82" width="196" height="64"/><text class="h" x="816" y="106">Method catalogue</text><text class="s" x="816" y="124">forms, defaults, validation</text>
+
+  <path class="ln" d="M520 160 V196" marker-end="url(#a)"/><text class="s" x="530" y="182">JSON over HTTP · multipart CSV upload</text>
+
+  <!-- API -->
+  <rect class="band" x="24" y="198" width="992" height="152"/>
+  <text class="s" x="40" y="218">API · FastAPI (single process, sync handlers run in a threadpool)</text>
+  <rect class="box" x="40" y="230" width="236" height="104"/><text class="h" x="52" y="254">Routers</text>
+  <text class="s" x="52" y="274">/api/datasets  /api/samples</text><text class="s" x="52" y="290">/api/power/*   /api/tests/*</text><text class="s" x="52" y="306">/api/analyze/*  /api/sequential/*</text><text class="s" x="52" y="322">/api/multiple-testing/*</text>
+  <rect class="box" x="296" y="230" width="236" height="104"/><text class="h" x="308" y="254">Orchestration</text>
+  <text class="s" x="308" y="274">analysis.py: data → stats → result</text><text class="s" x="308" y="290">experiments.py: arms, SRM, labels</text><text class="s" x="308" y="306">heavy_slot(): bounded MCMC /</text><text class="s" x="308" y="322">bootstrap concurrency</text>
+  <rect class="box" x="552" y="230" width="236" height="104"/><text class="h" x="564" y="254">Narration</text>
+  <text class="s" x="564" y="274">narrate.py: numbers → plain-English</text><text class="s" x="564" y="290">headline, bullets, caveats, verdict</text><text class="s" x="564" y="306">states assumptions per method</text>
+  <rect class="box" x="808" y="230" width="192" height="104"/><text class="h" x="820" y="254">Dataset store</text>
+  <text class="s" x="820" y="274">in-memory, TTL + size cap</text><text class="s" x="820" y="290">CSV profiling, role detection</text><text class="s" x="820" y="306">bundled samples, simulators</text>
+
+  <path class="ln" d="M520 350 V386" marker-end="url(#a)"/><text class="s" x="530" y="372">plain NumPy / pandas calls · heavy libraries imported lazily</text>
+
+  <!-- Stats -->
+  <rect class="band" x="24" y="388" width="992" height="168"/>
+  <text class="s" x="40" y="408">STATISTICS LIBRARY · app/stats (no web code; unit-testable in isolation)</text>
+  <rect class="st" x="40" y="420" width="150" height="124"/><text class="h" x="52" y="444">power.py</text><text class="s" x="52" y="464">sample size, power,</text><text class="s" x="52" y="480">MDE, curves</text><text class="s" x="52" y="502">exact noncentral t,</text><text class="s" x="52" y="518">normal for large n</text>
+  <rect class="st" x="204" y="420" width="170" height="124"/><text class="h" x="216" y="444">tests + corrections</text><text class="s" x="216" y="464">chi-square, Welch t,</text><text class="s" x="216" y="480">SRM, Bonferroni,</text><text class="s" x="216" y="496">Holm, Benjamini-</text><text class="s" x="216" y="512">Hochberg</text>
+  <rect class="st" x="388" y="420" width="170" height="124"/><text class="h" x="400" y="444">sequential.py</text><text class="s" x="400" y="464">Lan-DeMets alpha</text><text class="s" x="400" y="480">spending (cached),</text><text class="s" x="400" y="496">mSPRT always-valid</text><text class="s" x="400" y="512">p-values + bands</text>
+  <rect class="st" x="572" y="420" width="190" height="124"/><text class="h" x="584" y="444">bayes.py</text><text class="s" x="584" y="464">Beta-Binomial posterior</text><text class="s" x="584" y="480">PyMC (NUTS) engine</text><text class="s" x="584" y="496">closed-form engine +</text><text class="s" x="584" y="512">exact P(B&gt;A) check</text>
+  <rect class="st" x="776" y="420" width="224" height="124"/><text class="h" x="788" y="444">causal/</text><text class="s" x="788" y="464">PSM · DiD · synthetic control</text><text class="s" x="788" y="480">cross-checks: DoWhy,</text><text class="s" x="788" y="496">EconML doubly-robust</text><text class="s" x="788" y="512">balance + placebo diagnostics</text>
+
+  <text class="s" x="24" y="584">Single container: FastAPI also serves the built React app. Tests: 105 API/stat tests (91% coverage), 5 UI unit tests, 15 browser checks.</text>
+  <text class="s" x="24" y="602">Data flow: upload → profile → choose method → request → statistics → narration → result + chart data → React renders.</text>
+</svg>
