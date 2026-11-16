@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import time
+import copy
+from collections import OrderedDict
 from functools import wraps
+import threading
 from typing import Any, Callable
 
 import numpy as np
@@ -33,6 +36,32 @@ def _guard(fn: Callable[..., dict]) -> Callable[..., dict]:
         return clean(out)
 
     return wrapper
+
+
+_BAYES_CACHE: "OrderedDict[tuple, dict]" = OrderedDict()
+_BAYES_LOCK = threading.Lock()
+_BAYES_CACHE_SIZE = 128
+
+
+def _bayes_cached(arms: list, kwargs: dict) -> dict:
+    """Memoise posterior computations: the same counts, prior and settings always give the same answer
+    (the seed is fixed), so repeat requests (re-running, switching tabs, shared links) skip MCMC entirely."""
+    key = (tuple((a.name, a.n, a.x) for a in arms), tuple(sorted(kwargs.items())))
+    with _BAYES_LOCK:
+        hit = _BAYES_CACHE.get(key)
+        if hit is not None:
+            _BAYES_CACHE.move_to_end(key)
+            return copy.deepcopy(hit)
+    if kwargs["engine"] == "pymc":
+        with heavy_slot():
+            r = bayes.analyze_ab(arms, **kwargs)
+    else:
+        r = bayes.analyze_ab(arms, **kwargs)
+    with _BAYES_LOCK:
+        _BAYES_CACHE[key] = copy.deepcopy(r)
+        while len(_BAYES_CACHE) > _BAYES_CACHE_SIZE:
+            _BAYES_CACHE.popitem(last=False)
+    return r
 
 
 def _envelope(method: str, ds: Dataset, result: dict, narrative: dict) -> dict:
@@ -163,11 +192,7 @@ def run_bayesian(ds: Dataset, p, labels: LabelBook) -> dict:
         arms = [bayes.BinaryArm(a.key, a.n, a.x) for a in e.arms]
         kwargs = dict(control=0, prior=(p.prior_alpha, p.prior_beta), rope=p.rope, engine=p.engine,
                       draws=p.draws, chains=p.chains, hdi_prob=p.hdi_prob, seed=42)
-        if p.engine == "pymc":
-            with heavy_slot():
-                r = bayes.analyze_ab(arms, **kwargs)
-        else:
-            r = bayes.analyze_ab(arms, **kwargs)
+        r = _bayes_cached(arms, kwargs)
         labs = {a.key: a.label for a in e.arms}
         for c in r["comparisons"]:
             c.update({"title": e.title, "variant_label": labs[c["variant"]], "control_label": labs[c["control"]]})

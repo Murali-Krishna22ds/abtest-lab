@@ -156,13 +156,21 @@ def latency() -> dict:
         "difference-in-differences + DoWhy": ("/api/analyze/did", {"dataset_id": pn["id"], "outcome": "outcome", "group_col": "group", "treated_value": "treated", "time_col": "date", "cutoff": cut, "unit_col": "unit"}),
         "synthetic control, 25 placebos": ("/api/analyze/synthetic-control", {"dataset_id": pn["id"], "outcome": "outcome", "unit_col": "unit", "time_col": "date", "intervention": cut, "group_col": "group", "treated_value": "treated"}),
     }
+    from app.services import analysis
+
     out = {}
     for name, (path, body) in cases.items():
         times = []
         for i in range(1 if "PyMC" in name or "DoWhy" in name else 5):
+            analysis._BAYES_CACHE.clear()  # measure computation, not the memoised answer
             t = time.perf_counter(); r = c.post(path, json=body); times.append((time.perf_counter() - t) * 1000)
             assert r.status_code == 200, (name, r.text[:200])
         out[name] = {"median_ms": statistics.median(times), "runs": len(times)}
+    path, body = cases["Bayesian, PyMC (4 chains)"]
+    analysis._BAYES_CACHE.clear()
+    c.post(path, json=body)  # populate the cache
+    t = time.perf_counter(); c.post(path, json=body)  # identical request: served from the cache
+    out["Bayesian, PyMC, identical request repeated (memoised)"] = {"median_ms": (time.perf_counter() - t) * 1000, "runs": 1}
     out["_pymc_cold"] = pymc_cold_start()
     # throughput of a light endpoint
     t = time.perf_counter()
@@ -219,9 +227,9 @@ def write_md() -> None:
             continue
         L.append(f"| {name} | {v['median_ms']:.0f} ms |")
     cold = l["_pymc_cold"]
-    L += ["", f"**PyMC cold start** (fresh process): importing PyMC takes {cold['import_s']:.0f} s, the first model costs {cold['first_request_s']:.1f} s (graph compilation), and later models take {cold['second_request_s']:.1f} s. "
+    L += ["", f"**PyMC cold start** (fresh process, warm disk cache): the first request, which imports PyMC and compiles the model, takes {cold['first_request_s']:.1f} s; later models take {cold['second_request_s']:.1f} s. On a cold disk the first request in this project's environment took 10 to 13 s. "
           "Set `ABLAB_WARMUP_PYMC=true` to pay this at server start instead of on the first user request; the closed-form engine answers in milliseconds.",
-          "", f"A light endpoint (sample-size calculation) sustains about {l['_light_endpoint_rps']:.0f} requests per second per core."]
+          "", f"A light endpoint (sample-size calculation) sustains about {l['_light_endpoint_rps']:.0f} requests per second per core. Timings come from a shared single core and vary by up to about 2x between runs; treat them as orders of magnitude."]
     (ROOT / "docs" / "benchmark_results.md").write_text("\n".join(L) + "\n")
     print("\n".join(L))
 

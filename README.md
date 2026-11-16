@@ -54,11 +54,11 @@ Expected data layouts are documented in [`docs/API.md`](docs/API.md#data-formats
 
 Measured, not assumed (details in [`docs/TEST_RESULTS.md`](docs/TEST_RESULTS.md) and [`docs/benchmark_results.md`](docs/benchmark_results.md)):
 
-* **105 backend tests, 91% coverage**; 5 UI unit tests; 15 browser checks through the real UI, with no console errors.
+* **106 backend tests, 91% coverage**; 5 UI unit tests; 15 browser checks through the real UI, with no console errors.
 * False-positive rate at alpha 5%: **5.1%** (chi-square), **4.9%** (Welch); 95% intervals cover **95.2%** of the time.
 * Peeking 10 times at p < 0.05 with no real effect: **20.9%** false positives. Group-sequential testing: **5.2%**, at 66.6% power versus 69.3% for a single final test.
 * Observational data with a true effect of 2.0: raw difference **7.19**, propensity matching **2.06** (DiD 5.04 and synthetic control 4.95 on a panel whose true effect is 5.0).
-* PyMC agrees with the exact posterior to within 0.0055 in P(B beats A); latency is 4 to 60 ms for classical analyses and about 2 s for a PyMC model.
+* PyMC agrees with the exact posterior to within 0.0055 in P(B beats A); latency is roughly 10 to 100 ms for classical analyses and about 1.5 s for a PyMC model (about 17 ms when the identical request is repeated).
 
 ## Repository layout
 
@@ -66,7 +66,7 @@ Measured, not assumed (details in [`docs/TEST_RESULTS.md`](docs/TEST_RESULTS.md)
 backend/app/stats/        pure statistics (power, tests, corrections, sequential, bayes, causal/)
 backend/app/services/     datasets, experiment assembly, orchestration, plain-English narration
 backend/app/routers/      HTTP endpoints
-backend/tests/            105 tests
+backend/tests/            106 tests
 frontend/src/             React app (methods.js catalogue, components/, charts)
 frontend/e2e/             Playwright smoke test and demo recorder
 data/sample/              bundled example data

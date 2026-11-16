@@ -33,9 +33,11 @@ densities, balance, series) is produced server-side so the browser never re-impl
 ## Performance decisions (all measured; see `benchmark_results.md`)
 
 * **Lazy imports.** The API imports in about 1.3 s; PyMC, arviz, DoWhy and EconML load only when first used (importing them all costs 25 s on a cold disk).
-* **Two Bayesian engines.** The closed-form engine answers in about 65 ms; PyMC takes about 2 s per model after a one-off compile. `ABLAB_WARMUP_PYMC=true` compiles the model in a background thread at start-up so no user pays that cost.
-* **Sufficient statistics.** Conversion data are reduced to counts per arm, so analysis cost does not grow with sample size. A 15,000-row, four-test frequentist analysis takes about 60 ms.
+* **Two Bayesian engines.** The closed-form engine answers in about 60 ms; PyMC takes about 1.5 s per model after a one-off compile. `ABLAB_WARMUP_PYMC=true` compiles the model in a background thread at start-up so no user pays that cost.
+* **Sufficient statistics.** Conversion data are reduced to counts per arm, so analysis cost does not grow with sample size. A 15,000-row, four-test frequentist analysis takes roughly 50 to 100 ms.
 * **Vectorised Monte Carlo.** Peeking and multiple-testing studies simulate thousands of experiments with array operations.
+* **Split front-end bundle.** Chart-heavy views (results, planner, explore) are lazy-loaded and React/Recharts live in separate vendor chunks, so a first visit downloads **57 KB** compressed (it was about 180 KB); the 116 KB charting stack loads only when a chart is first shown.
+* **Memoised Bayesian results.** Identical counts, prior and settings (the seed is fixed) are served from a 128-entry LRU cache of deep copies: a repeated PyMC request falls from about 1,300 ms to about 10 ms.
 * **Cached boundaries.** Group-sequential boundaries (a numerical integral) are memoised with `lru_cache`.
 * **Bounded heavy work.** `heavy_slot()` limits concurrent MCMC and bootstrap jobs (default 2) so a burst of expensive requests returns a polite 503 instead of starving the API.
 * **Large-sample power.** Exact noncentral-t power is replaced by the normal approximation beyond 2,000 degrees of freedom (indistinguishable there, much faster), with a guarded fallback when SciPy's `nct` returns NaN.

@@ -294,3 +294,22 @@ def test_multiple_testing_simulation_controls_errors():
     assert m["none"]["fwer"] > 0.4  # uncorrected testing almost always produces a false positive
     assert m["bonferroni"]["fwer"] < 0.07 and m["holm"]["fwer"] < 0.07
     assert m["bh"]["fdr"] < 0.07 and m["bh"]["power"] > m["bonferroni"]["power"]
+
+
+@pytest.mark.slow
+def test_bayesian_results_are_memoised_and_unchanged(sessions):
+    """Identical requests skip MCMC; the cached copy must be identical and isolated from later edits."""
+    import time
+
+    body = dict(dataset_id=sessions["id"], labels_id=sessions["meta"]["labels_id"], outcome="converted",
+                variant_columns=["screenshots_variant"], engine="pymc", draws=777, chains=2)
+    t0 = time.perf_counter(); first = post("/api/analyze/bayesian", **body).json(); cold = time.perf_counter() - t0
+    t0 = time.perf_counter(); second = post("/api/analyze/bayesian", **body).json(); warm = time.perf_counter() - t0
+    for r in (first, second):
+        r.pop("runtime_ms")
+        r["result"]["diagnostics"].pop("seconds", None)
+    assert first == second
+    assert warm < cold / 3
+    # a different label set must not be served stale labels from the cache
+    plain = post("/api/analyze/bayesian", **{**body, "labels_id": None}).json()
+    assert plain["result"]["experiments"][0]["comparisons"][0]["variant_label"] != first["result"]["experiments"][0]["comparisons"][0]["variant_label"]

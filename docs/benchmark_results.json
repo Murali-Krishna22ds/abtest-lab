@@ -87,7 +87,7 @@
   },
   "bayesian": {
     "max_abs_diff_pymc_vs_exact": 0.005518034917043502,
-    "pymc_seconds_median": 1.8671558759999698,
+    "pymc_seconds_median": 1.9358790830000316,
     "hdi_coverage": 0.949,
     "hdi_sims": 4000
   },
@@ -115,50 +115,54 @@
   },
   "latency": {
     "power / sample-size": {
-      "median_ms": 9.04825200001369,
+      "median_ms": 9.253792999970756,
       "runs": 5
     },
     "chi-square (summary)": {
-      "median_ms": 3.5359799999810093,
+      "median_ms": 9.198457000024973,
       "runs": 5
     },
     "frequentist, 4 tests / 15k rows": {
-      "median_ms": 60.07736300000488,
+      "median_ms": 99.75429799999347,
       "runs": 5
     },
     "sequential, 10 looks / 15k rows": {
-      "median_ms": 12.150141999995867,
+      "median_ms": 11.234711000042807,
       "runs": 5
     },
     "Bayesian, closed form": {
-      "median_ms": 65.46444800000017,
+      "median_ms": 62.81600800002707,
       "runs": 5
     },
     "Bayesian, PyMC (4 chains)": {
-      "median_ms": 1960.7234659999904,
+      "median_ms": 1532.4073310000585,
       "runs": 1
     },
     "PSM, n=3000, 100 bootstraps": {
-      "median_ms": 422.137733999989,
+      "median_ms": 382.72341100002905,
       "runs": 5
     },
     "PSM + DoWhy + EconML cross-checks": {
-      "median_ms": 1045.621552,
+      "median_ms": 1366.096276999997,
       "runs": 1
     },
     "difference-in-differences + DoWhy": {
-      "median_ms": 33.37854699998388,
+      "median_ms": 47.99753800000417,
       "runs": 1
     },
     "synthetic control, 25 placebos": {
-      "median_ms": 290.97281000002795,
+      "median_ms": 323.9132129999689,
       "runs": 5
     },
-    "_pymc_cold": {
-      "import_s": 0.5393253130000062,
-      "first_request_s": 3.2738131340000223,
-      "second_request_s": 2.0190843970000287
+    "Bayesian, PyMC, identical request repeated (memoised)": {
+      "median_ms": 17.417955999917467,
+      "runs": 1
     },
-    "_light_endpoint_rps": 110.71413714580005
+    "_pymc_cold": {
+      "import_s": 0.4978946659999792,
+      "first_request_s": 2.9472113900000068,
+      "second_request_s": 1.4542256150000412
+    },
+    "_light_endpoint_rps": 110.56224749866352
   }
 }

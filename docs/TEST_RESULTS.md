@@ -4,10 +4,10 @@ Run on a single CPU core, Python 3.12, Node 22, Chromium 153 (Playwright 1.63). 
 
 | Suite | Result | Notes |
 |---|---|---|
-| Backend (pytest) | **105 passed** in about 13 s | 91% line coverage (`make test-api`) |
+| Backend (pytest) | **106 passed** in about 14 s (27 s with coverage) | 91% line coverage (`make test-api`) |
 | Front-end unit (vitest) | **5 passed** | method catalogue: defaults, validation, request building, covariate-leak guard |
 | Browser end-to-end (Playwright) | **15 of 15 checks passed**, zero console or page errors | every analysis method through the real UI (`make e2e`) |
-| Clean-install check | **105 passed** in a fresh virtualenv built only from `requirements.lock.txt` | validates the lock file and setup instructions |
+| Clean-install check | **106 passed** in a fresh virtualenv built only from `requirements.lock.txt` | validates the lock file and setup instructions |
 
 ## Backend tests by file
 
@@ -19,7 +19,7 @@ Run on a single CPU core, Python 3.12, Node 22, Chromium 153 (Playwright 1.63). 
 | `test_bayes.py` | 7 | PyMC posterior against the exact Beta-Binomial result, priors, ROPE, expected loss |
 | `test_causal.py` | 11 | PSM removes confounding bias, DiD recovers the effect and matches DoWhy, synthetic control recovers the effect with placebo inference, parallel-trends violations are flagged, input validation (the EconML cross-check is exercised in `test_api.py`) |
 | `test_simulate.py` | 6 | Simulators are reproducible and honour the requested truth |
-| `test_api.py` | 47 | Every endpoint; validation errors; uploads; path-traversal safety; agreement with SciPy, statsmodels and published sample-size values (3,841 and 64 per arm); PSM bias removal with DoWhy and EconML cross-checks; narrative regressions |
+| `test_api.py` | 48 | Every endpoint; validation errors; uploads; path-traversal safety; agreement with SciPy, statsmodels and published sample-size values (3,841 and 64 per arm); PSM bias removal with DoWhy and EconML cross-checks; narrative regressions; memoised Bayesian results are identical, isolated and at least 3x faster |
 
 The four slowest tests (PyMC sampling and PSM with bootstraps) take 1.5 to 2.4 s each and are marked `slow`.
 
@@ -52,8 +52,8 @@ Summarised below; full tables in [`benchmark_results.md`](benchmark_results.md).
 | 95% credible-interval coverage over 4,000 random worlds | 94.9% |
 | Observational: raw gap vs truth of 2.0 | 7.19 (bias +5.19); matching gives 2.06 (bias +0.06) |
 | Panel: true effect 5.0 | DiD 5.04, synthetic control 4.95 |
-| Median latency: sample size / chi-square / 4-test analysis / sequential | 9 ms / 4 ms / 60 ms / 12 ms |
-| Median latency: Bayesian closed form / PyMC / PSM (100 bootstraps) | 65 ms / about 2 s / 422 ms |
+| Median latency: sample size / chi-square / 4-test analysis / sequential | 9 ms / 9 ms / 100 ms / 11 ms |
+| Median latency: Bayesian closed form / PyMC / PSM (100 bootstraps) | 63 ms / about 1.5 s / 383 ms |
 
 ## Bugs found and fixed during verification
 

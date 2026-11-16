@@ -1,11 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { post } from "./api.js";
 import DataStep from "./components/DataStep.jsx";
-import Explore from "./components/Explore.jsx";
 import { MethodForm, MethodPicker } from "./components/MethodStep.jsx";
-import Planner from "./components/Planner.jsx";
-import ResultView from "./components/ResultView.jsx";
+import { Spinner } from "./components/ui.jsx";
 import { buildRequest, defaultConfig, method as methodOf } from "./methods.js";
+
+// Chart-heavy views are split out so the first paint downloads only the forms (charts load on first use).
+const Planner = lazy(() => import("./components/Planner.jsx"));
+const Explore = lazy(() => import("./components/Explore.jsx"));
+const ResultView = lazy(() => import("./components/ResultView.jsx"));
+const Loading = () => <div className="card"><Spinner>Loading charts…</Spinner></div>;
 
 const TABS = [["analyze", "Analyze data"], ["plan", "Plan an experiment"], ["explore", "Explore the pitfalls"]];
 
@@ -93,13 +97,13 @@ export default function App() {
                 <MethodForm profile={profile} methodId={methodId} config={config} onConfig={setConfig} onRun={run} running={running} error={error} />
               )}
               {profile && !methodId && <div className="card"><h2>Next: choose a method</h2><p className="sub">Pick the question you want answered from the list on the left.</p></div>}
-              <div ref={resultRef} style={{ marginTop: out ? 18 : 0 }}>{out && <ResultView out={out} config={config} />}</div>
+              <div ref={resultRef} style={{ marginTop: out ? 18 : 0 }}>{out && <Suspense fallback={<Loading />}><ResultView out={out} config={config} /></Suspense>}</div>
             </div>
           </div>
         </>
       )}
-      {tab === "plan" && <Planner />}
-      {tab === "explore" && <Explore />}
+      {tab === "plan" && <Suspense fallback={<Loading />}><Planner /></Suspense>}
+      {tab === "explore" && <Suspense fallback={<Loading />}><Explore /></Suspense>}
     </div>
   );
 }

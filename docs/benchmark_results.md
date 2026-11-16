@@ -38,7 +38,7 @@ Reading the peeking table: naive peeking looks powerful only because it cheats (
 |---|---|
 | Max |P(B>A)| gap, PyMC (4 chains x 2,000 draws) vs exact integral, 5 scenarios | 0.0055 |
 | 95% credible-interval coverage of the true difference (4,000 random worlds) | 94.9% |
-| PyMC sampling time per two-arm model (median) | 1.87 s |
+| PyMC sampling time per two-arm model (median) | 1.94 s |
 
 ## Observational methods (15 independent datasets each)
 
@@ -57,16 +57,17 @@ With only 15 datasets per method, coverage figures are coarse; the point is that
 | Operation | Median |
 |---|---|
 | power / sample-size | 9 ms |
-| chi-square (summary) | 4 ms |
-| frequentist, 4 tests / 15k rows | 60 ms |
-| sequential, 10 looks / 15k rows | 12 ms |
-| Bayesian, closed form | 65 ms |
-| Bayesian, PyMC (4 chains) | 1961 ms |
-| PSM, n=3000, 100 bootstraps | 422 ms |
-| PSM + DoWhy + EconML cross-checks | 1046 ms |
-| difference-in-differences + DoWhy | 33 ms |
-| synthetic control, 25 placebos | 291 ms |
+| chi-square (summary) | 9 ms |
+| frequentist, 4 tests / 15k rows | 100 ms |
+| sequential, 10 looks / 15k rows | 11 ms |
+| Bayesian, closed form | 63 ms |
+| Bayesian, PyMC (4 chains) | 1532 ms |
+| PSM, n=3000, 100 bootstraps | 383 ms |
+| PSM + DoWhy + EconML cross-checks | 1366 ms |
+| difference-in-differences + DoWhy | 48 ms |
+| synthetic control, 25 placebos | 324 ms |
+| Bayesian, PyMC, identical request repeated (memoised) | 17 ms |
 
-**PyMC cold start** (fresh process): importing PyMC takes 1 s, the first model costs 3.3 s (graph compilation), and later models take 2.0 s. Set `ABLAB_WARMUP_PYMC=true` to pay this at server start instead of on the first user request; the closed-form engine answers in milliseconds.
+**PyMC cold start** (fresh process, warm disk cache): the first request, which imports PyMC and compiles the model, takes 2.9 s; later models take 1.5 s. On a cold disk the first request in this project's environment took 10 to 13 s. Set `ABLAB_WARMUP_PYMC=true` to pay this at server start instead of on the first user request; the closed-form engine answers in milliseconds.
 
-A light endpoint (sample-size calculation) sustains about 111 requests per second per core.
+A light endpoint (sample-size calculation) sustains about 111 requests per second per core. Timings come from a shared single core and vary by up to about 2x between runs; treat them as orders of magnitude.

@@ -45,6 +45,6 @@
   <rect class="st" x="572" y="420" width="190" height="124"/><text class="h" x="584" y="444">bayes.py</text><text class="s" x="584" y="464">Beta-Binomial posterior</text><text class="s" x="584" y="480">PyMC (NUTS) engine</text><text class="s" x="584" y="496">closed-form engine +</text><text class="s" x="584" y="512">exact P(B&gt;A) check</text>
   <rect class="st" x="776" y="420" width="224" height="124"/><text class="h" x="788" y="444">causal/</text><text class="s" x="788" y="464">PSM · DiD · synthetic control</text><text class="s" x="788" y="480">cross-checks: DoWhy,</text><text class="s" x="788" y="496">EconML doubly-robust</text><text class="s" x="788" y="512">balance + placebo diagnostics</text>
 
-  <text class="s" x="24" y="584">Single container: FastAPI also serves the built React app. Tests: 105 API/stat tests (91% coverage), 5 UI unit tests, 15 browser checks.</text>
+  <text class="s" x="24" y="584">Single container: FastAPI also serves the built React app. Tests: 106 API/stat tests (91% coverage), 5 UI unit tests, 15 browser checks.</text>
   <text class="s" x="24" y="602">Data flow: upload → profile → choose method → request → statistics → narration → result + chart data → React renders.</text>
 </svg>
